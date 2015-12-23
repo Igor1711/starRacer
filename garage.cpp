@@ -15,7 +15,7 @@ Garage::~Garage()
 void Garage::Init()
 {
     setResizeMode(QQuickView::SizeRootObjectToView);
-    setSource(QUrl::fromLocalFile("/home/igor/qt-projects/Star_Racer/star_Racer/Garageform.qml"));
+    setSource(QUrl::fromLocalFile("Garageform.qml"));
     //Root = this->rootObject();       //Соединяем C++ и QML, делая видимым функции С++ через элемент window
     this->rootContext()->setContextProperty("window", this);
 }

@@ -68,6 +68,7 @@ Form::Form(QQuickView *b, gameplay *p, int fin,QWidget *parent) :
         if (game->race->opp==0) ui->label_2->setVisible(false);
         else ui->label_2->setVisible(true);
         game->race=NULL;
+        game->save_game();
     }
 }
 
@@ -127,6 +128,8 @@ void Form::back()
                     if (game->tournament_finish()==3) game->money+=17000;
                 }//денежный приз за занятие призового места
             }
+            if (game->tournament_progress < k) game->tournament_progress = k;
+            game->save_game();
         }
     }
     else

@@ -254,7 +254,7 @@ void comp::tournamentshow()//показ информации о турнире
     int x;
     x=ui->tournamentchoose->currentIndex();
     ui->textBrowser_5->setText(race_information[x+5]);
-    if (x==0) ui->race4->setEnabled(false);
+    if (x == 0 || x > game1->tournament_progress + 1) ui->race4->setEnabled(false);
     else ui->race4->setEnabled(true);
 }
 void comp::loadtournament(short n)//загрузить турнир

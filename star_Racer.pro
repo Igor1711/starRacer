@@ -20,9 +20,8 @@ HEADERS += comp.h\
 	 spaceship.h\
 	 startform.h\
 	 track.h \
-        gameform.h\
-        gameform1.h\
-        form.h
+         gameform1.h\
+         form.h
 FORMS += comp.ui\
 	 garage.ui\
          startform.ui\
@@ -34,8 +33,7 @@ SOURCES += comp.cpp \
            spaceship.cpp \
            startform.cpp \
            track.cpp \
-           gameform.cpp\
-            gameform1.cpp\
+           gameform1.cpp\
            form.cpp
 
 OTHER_FILES += \

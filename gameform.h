@@ -6,7 +6,7 @@
 
 //#include <panda3d/windowFramework.h>
 
-class gameform
+class gameform1
 {
     gameplay *game;
     QQuickView *garage;

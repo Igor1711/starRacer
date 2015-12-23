@@ -5,6 +5,7 @@
 #include <QString>
 
 
+
 struct key_position//контрольная точка
 {
     int x, y, z;//координаты
@@ -27,7 +28,11 @@ public:
 
 class gameplay
 {
-public:
+    friend class gameform;
+    friend class Garage;
+    friend class Form;
+    friend class comp;
+protected:
     short int my_ship_num;//Количество кораблей в гараже
     short int choosen_ship; //Номер текущего корабля
     My_ship *my_garage[5];//Гараж на 5 кораблей
@@ -43,7 +48,7 @@ public:
     My_ship *space;//корабль игрока
     track *race;//трасса
     bool just_bought, trackloaded;//отчет о покупке корабля, загрузке трека
-    gameplay(bool load);//конструктор, загружаем сохраненную игру или начинаем новую
+    short tournament_progress;
     void loadtrack(int number, int lap, int opp);//загрузка трека
     item *good[14];//товары в магазине
     void loadfinish();//окончание загрузки (для взаимодействия с qml-скриптами)
@@ -64,6 +69,8 @@ public:
     void loadborders();//загрузка базы границ (для коллизий)
     QString get_ship_model(short n);//выдает путь к 3d модели
     int get_ship_params(short n);//выдает размеры корабля
+public:
+    gameplay(bool load);//конструктор, загружаем сохраненную игру или начинаем новую
 
 };
 

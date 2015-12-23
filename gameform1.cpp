@@ -41,7 +41,7 @@ gameform::~gameform()
 void gameform::Init()
 {
     setResizeMode(QQuickView::SizeRootObjectToView);
-    setSource(QUrl::fromLocalFile("/home/igor/qt-projects/Star_Racer/star_Racer/Gameform.qml"));
+    setSource(QUrl::fromLocalFile("Gameform.qml"));
     this->rootContext()->setContextProperty("window1", this);
 }//инициализация Qml скрипта
 void gameform::keyPressEvent(QKeyEvent *event)

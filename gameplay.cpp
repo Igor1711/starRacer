@@ -8,12 +8,14 @@ struct save1
 {
     My_ship *space1;
     int mon;
+    int tournament_progress;
 };
 
 gameplay :: gameplay(bool load)
 {
-    money = 120000;//изначальное количество денег, при начале новой игры
+    money = 48000;//изначальное количество денег, при начале новой игры
     finished = 0;
+    tournament_progress = 0;
     my_ship_num = 0;
     choosen_ship = 0;//Изначально нет кораблей
     tournament = 0;
@@ -23,24 +25,24 @@ gameplay :: gameplay(bool load)
     trackloaded = false; finished = false;
     good[0] = new item(1, 38000, "pacer DH-100", "A fast and economic spaceship. \n maximumspeed 3000, weapon - rockets \n hiperengine - optional");
     good[1] = new item(1, 40500, "gazlock SD300", "Heavy race-ship, shield in complect slower than pacer but accelerates faster \n maximumspeed 2900, weapon - rockets \n hiperengine - optional");
-    good[2] = new item(1, 45000, "CutterMil1", "Race-version of police ship, has larger butterys and shield-in-complect secret technologies encreased the acceleration, best choice for difficult tracks\n maximumspeed 6500, weapon - rockets \n hiperengine - optional");
-    good[3] = new item(1, 43000, "Shark SD-360", "Very fast spaceship, has an upgraded engine and larger butterys from the production line , weapon - rockets \n hiperengine optional");
-    good[4] = new item(1, 46500, "Spider SRH250", "New technology allows to reach better characterics for the same resources, this spaceship has an upgraded engine and larger butterys from the production line also it is 500mph faster than based ships with such engines, best for straight tracks, weapon - rockets \n hiperengine optional");
-    good[5] = new item(2, 8000, "ForsedH-200", "Forsed Engine will encrease your result");
-    good[6] = new item(2, 15000, "NitroForceHN-500", "New NitroHidragenium engines will double your speed");
+    good[2] = new item(1, 53000, "CutterMil1", "Race-version of police ship, has larger butterys and shield-in-complect secret technologies encreased the acceleration, best choice for difficult tracks\n maximumspeed 6500, weapon - rockets \n hiperengine - optional");
+    good[3] = new item(1, 52000, "Shark SD-360", "Very fast spaceship, has an upgraded engine and larger butterys from the production line , weapon - rockets \n hiperengine optional");
+    good[4] = new item(1, 56500, "Spider SRH250", "New technology allows to reach better characterics for the same resources, this spaceship has an upgraded engine and larger butterys from the production line also it is 500mph faster than based ships with such engines, best for straight tracks, weapon - rockets \n hiperengine optional");
+    good[5] = new item(2, 12000, "ForsedH-200", "Forsed Engine will encrease your result");
+    good[6] = new item(2, 17000, "NitroForceHN-500", "New NitroHidragenium engines will double your speed");
     good[7] = new item(2, 33000, "HiperSDH-5000", "Hiperengine opens other planets");
     good[8] = new item(2, 3800, "Shield-150", "Protecting shield");
     good[9] = new item(2, 3500, "ButteryX2", "Forced akkumulator charges lasers faster");
     good[10] = new item(2, 10500, "Radar", "Using a radar you can easily find the next checkpoint if ypu missed it \n Also on a Radar you can see where ypur opponents are, Radar is necessary to fulfill quests");
-    good[11] = new item(2, 3900, "Lasergun S-50", "lasergun doesn't need charges");
-    good[12] = new item(2, 8000, "Lasergun DS-100", "Double canon - double damage");
+    good[11] = new item(2, 4900, "Lasergun S-50", "lasergun doesn't need charges");
+    good[12] = new item(2, 9000, "Lasergun DS-100", "Double canon - double damage");
     good[13] = new item(2, 5000, "RX-30", "this robot saves you $100/ upgrade");
     //loadborders();
     place[0].x = 17397; place[0].z = 47900; place[0].y = 114884;
     place[1].x = -64282; place[1].z = 47900; place[1].y = 35311;
     place[2].x = -64282; place[2].z = 47900; place[2].y = 35311;
     part_in_single = false;// участие в одиночном заезде, оружие отключено
-    if (load);// load_game();
+    if (load) load_game();
     count = 0; min = 0; sec = 0; mil = 0; //пока игрок не участвует в гонке таймер обнулен
 }
 
@@ -59,18 +61,44 @@ void gameplay :: loadtrack(int number, int lap, int opp)
     i=0;
     while (i<race->opp)
     {
-        if (tournament == 0)
-        {
-            if (number == 0) hard=1;
-            if (number == 1) hard=1+(rand() %2);
-            if (number == 2) hard=2;
-            if (number == 3) hard=2+(rand() %2);
+        switch (tournament) {
+            case 1:{
+                hard=1;
+                break;
+            }
+            case 2:{
+                hard=1+(rand() %2);
+                break;
+            }
+            case 3:{
+                hard=2+(rand() %2);
+                break;
+            }
+            case 4:{
+                hard=3;
+                break;
+            }
+            default:{
+                switch (number){
+                case 1:{
+                    hard=1+(rand() %2);
+                    break;
+                }
+                case 2:{
+                    hard=2;
+                    break;
+                }
+                case 3:{
+                    hard=2+(rand() %2);
+                    break;
+                }
+                default: {hard = 1;
+                    break;
+                }
+                }
+                break;
+            }
         }
-        if (tournament == 1) hard=1;
-        if (tournament == 2) hard=1+(rand() %2);
-        if (tournament == 3) hard=2+(rand() %2);
-        if (tournament == 4) hard=3;
-
         race->opponent[i]=new Opponent(place[1].x,place[1].y-600*i,place[1].z,hard);
         i++;
     }
@@ -205,61 +233,81 @@ short int gameplay  ::  tournament_finish()
     tournament = 0;
     return pos;
 }
-void gameplay  ::  save_game()
+void gameplay :: save_game()
 {
     FILE *f;
     f=fopen ("savefile.txt", "wt");
     char s1[20];
-    sprintf (s1, "%d",space->tip);
-    s1[24] = '\0';
+    sprintf (s1, "%d|", my_ship_num);
     fputs (s1, f);
-    fputs ("\n", f);
-
-    strncpy(s1, "upgrades:", 9);
-    int i = 9;
-    while (i < 18)
+    fputs("/", f);
+    for (int j = 0; j < my_ship_num; j++)
     {
-        if (space->upgrades[i - 9]) s1[i] = '1';
-        else s1[i] = '0';
-        i++;
+        sprintf (s1, "%d|", my_garage[j]->tip);
+        fputs (s1, f);
+        strncpy(s1, ":", 1);
+        int i = 1;
+        while (i < 10)
+        {
+            if (my_garage[j]->upgrades[i - 1]) s1[i] = 'r';
+            else s1[i] = 'w';
+            i++;
+        }
+        s1[i] = '\0';
+        fputs(s1, f);
+        fputs("/", f);
     }
-    s1[i] = '\0';
+    sprintf(s1, ">%d", money);
     fputs(s1, f);
-    fputs("\n", f);
-    sprintf(s1, "%d", money);
+    sprintf(s1, "<%d", tournament_progress);
     s1[24] = '\0';
     fputs(s1, f);
     fputs("\n", f);
     fclose(f);
-
 }
-void gameplay  ::  load_game()
+void gameplay :: load_game()
 {
     FILE *f;
     f = fopen ("savefile.txt", "r");
     if (f != NULL)
     {
-        char s1[25];
-        fgets(s1, 5, f);
-        int i = 0,k = 0, m;
-        i = atoi(s1);
-        space = new My_ship(0, good[i-1]->price);
-        i = 0;
-        fgets(s1, 25, f);
-        m = strlen(s1);
-        while(i < m)
+        char *s1 = (char*) malloc(256), s2[15];
+        //Определение количества кораблей в гараже
+        int i = 0;
+        fgets(s1, 256, f);
+        while (s1[i] != '|' && s1[i] != '\0')
         {
-            if (s1[i]  ==  ':') k = i + 1;
+            s2[i] = s1[i];
             i++;
         }
-        i = 0;
-        while (i < 9)
+        s2[i] = '\0';
+        my_ship_num = atoi(s2);
+        int j = 0;
+        while (j < my_ship_num)//определяем корабли
         {
-            if (s1[k + i]  ==  '1' && !space->upgrades[i]) space->upgrade(i, good[i + 5]->price);
-            i++;
+            s1 = strchr(s1,'/') + 1;
+            i = 0;
+            while (s1[i] != '|' && s1[i] != '\0')
+            {
+                s2[i] = s1[i];
+                i++;
+            }
+            s2[i] = '\0';
+            int type = atoi(s2);
+            my_garage[j] = new My_ship(type, good[type-1]->price);
+            s1 = strchr(s1,'|') + 2;
+            for (i = 0; i < 9; i++)
+            {
+                if (s1[i]  ==  'r' && !my_garage[j]->upgrades[i]) my_garage[j]->upgrade(i, good[i + 5]->price);
+            }
+            j++;
         }
-        fgets(s1, 15, f);
-        money = atoi(s1);
+        s1 = strchr(s1, '>') + 1;
+
+        money = atoi(s1);//баланс игрока
+        s1 = strchr(s1, '<') + 1;
+        tournament_progress = atoi(s1);//прогресс игрока
+        space = my_garage[0];
         fclose(f);
     }
 
@@ -538,42 +586,39 @@ int gameplay::get_ship_params(short n)
 }
 QString gameplay::get_ship_model(short n)
 {
+    QString catalog = "./3dmodels/spaceships/";
     if (space!=NULL)
     {
         if (n==0)
         {
             switch (space->tip){
-            case 1:
-                return "./3dmodels/spaceships/pacer.3ds";
             case 2:
-                return "./3dmodels/spaceships/gazlock.3ds";
+                return catalog+"gazlock.3ds";
             case 3:
-                return "./3dmodels/spaceships/cutter.3ds";
+                return catalog+"cutter.3ds";
             case 4:
-                return "./3dmodels/spaceships/shark.3ds";
+                return catalog+"shark.3ds";
             case 5:
-                return "./3dmodels/spaceships/spider.3ds";
+                return catalog+"spider.3ds";
             default:
-                return "./3dmodels/spaceships/pacer.3ds";
+                return catalog+"pacer.3ds";
             }
         }
         else if (n==1)
         {
             switch (space->laserweapon){
-            case 0:
-                return "./3dmodels/spaceships/nogun.3ds";
             case 1:
-                return "./3dmodels/spaceships/lasegun.3ds";
+                return catalog+"lasegun.3ds";
             case 2:
-                return "./3dmodels/spaceships/doublegun.3ds";
+                return catalog+"doublegun.3ds";
             default:
-                return "./3dmodels/spaceships/nogun.3ds";
+                return catalog+"nogun.3ds";
             }
         }
         else
         {
-            if (space->upgrades[2]) return "./3dmodels/spaceships/hiperengine.3ds";
-            else return "./3dmodels/spaceships/nogun.3ds";
+            if (space->upgrades[2]) return catalog+"hiperengine.3ds";
+            else return catalog+"nogun.3ds";
         }
     }
     else return "./3dmodels/spaceships/nogun.3ds";

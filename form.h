@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QQuickView>
 #include <gameplay.h>
-#include "gameform.h"
+#include "gameform1.h"
 
 namespace Ui {
 class Form;
