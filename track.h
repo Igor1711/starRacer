@@ -6,6 +6,7 @@
 
 class checkpoint//контрольная точка
 {
+//comment
 public:
     short int x, y, z, angle;
     checkpoint(short int x1, short int y1, short int z1, short int x2, short int y2);
